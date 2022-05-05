@@ -12,6 +12,8 @@ object juego{
 		game.addVisual(cactus)
 		game.addVisual(dino)
 		game.addVisual(reloj)
+		game.boardGround("Fondo.jpg")
+		game.addVisual(trampolin)
 	
 		keyboard.space().onPressDo{ self.jugar()}
 		
@@ -23,6 +25,7 @@ object juego{
 		dino.iniciar()
 		reloj.iniciar()
 		cactus.iniciar()
+		trampolin.iniciar()
 	}
 	
 	method jugar(){
@@ -39,6 +42,7 @@ object juego{
 		game.addVisual(gameOver)
 		cactus.detener()
 		reloj.detener()
+		trampolin.detener()
 		dino.morir()
 	}
 	
@@ -136,4 +140,40 @@ object dino {
 	method estaVivo() {
 		return vivo
 	}
+	method subirsubir(){
+		position = position.up(2)
+	}
+	method bajarbajar(){
+		position = position.down(2)
+	}
+	
+	method saltardoble(){
+			self.subirsubir()
+			game.schedule(velocidad*3,{self.bajarbajar()})
+	}
 }
+object trampolin{
+	const posicionInicial = game.at(game.width()-1,2)
+		var position = posicionInicial
+
+		method image() = "trampolin.png"
+		method position() = position
+		
+		method iniciar(){
+		position = posicionInicial
+		game.onTick(velocidad,"moverTrampolin",{self.mover()})
+	}
+	
+	method mover(){
+		position = position.left(2)
+		if (position.x() == -1)
+			position = posicionInicial
+	}
+	method detener(){
+		game.removeTickEvent("moverTrampolin")
+	}
+	method chocar(){
+		game.say(dino,"Anashe")
+		dino.saltardoble()
+	}
+} 	
